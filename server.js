@@ -8,11 +8,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: 'https://myinterq.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // if using cookies or auth
-}));
+app.use(cors());
 
 
 // ✅ MongoDB Setup
