@@ -36,9 +36,6 @@ const interviewSchema = new mongoose.Schema({
 });
 const Interview = mongoose.model("Interview", interviewSchema);
 
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
 // ✅ Groq/OpenAI Setup
 const groqApiKey = process.env.GROQ_API_KEY;
 if (!groqApiKey) {
