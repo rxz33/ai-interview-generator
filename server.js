@@ -29,10 +29,15 @@ const interviewSchema = new mongoose.Schema({
   jobType: String,
   workExperience: String,
   companyType: String,
-  location: String,
+  topic: String,
+  difficulty: String,
   questions: [{ question: String, answer: String }],
+  createdAt: { type: Date, default: Date.now }
 });
 const Interview = mongoose.model("Interview", interviewSchema);
+
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // ✅ Groq/OpenAI Setup
 const groqApiKey = process.env.GROQ_API_KEY;
@@ -50,6 +55,7 @@ const openai = new OpenAI({
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
+
 
 // ✅ Main Interview Route
 app.post("/api/interview-questions", async (req, res) => {
@@ -135,4 +141,4 @@ Only return the list of Q&A without extra comments or intro.
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on ${process.env.PORT}`);
-});
+}); 
