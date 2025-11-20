@@ -14,22 +14,20 @@ app.use(cors({
   allowedHeaders: ["Content-Type"],
 }));
 
-
-// ✅ MongoDB Setup
 const mongoURI = process.env.MONGODB_URI;
 if (!mongoURI) {
-  console.error("❌ MONGODB_URI not found in .env. Please set it before running the server.");
+  console.error("MONGODB_URI not found in .env. Please set it before running the server.");
   process.exit(1);
 }
 
 mongoose.connect(mongoURI)
-  .then(() => console.log("✅ Connected to MongoDB"))
+  .then(() => console.log("Connected to MongoDB"))
   .catch(err => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
     process.exit(1);
   });
 
-// ✅ Interview Schema
+// Interview Schema
 const interviewSchema = new mongoose.Schema({
   jobType: String,
   workExperience: String,
@@ -41,7 +39,7 @@ const interviewSchema = new mongoose.Schema({
 });
 const Interview = mongoose.model("Interview", interviewSchema);
 
-// ✅ Groq/OpenAI Setup
+// GroqAI Setup
 const groqApiKey = process.env.GROQ_API_KEY;
 if (!groqApiKey) {
   console.error("❌ GROQ_API_KEY not found in .env. Please set it before running the server.");
@@ -53,13 +51,13 @@ const openai = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1", // Important for Groq
 });
 
-// ✅ Health Route
+// Health Route
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
 
-// ✅ Main Interview Route
+// Main Interview Route
 app.post("/api/interview-questions", async (req, res) => {
   try {
     const { jobType, workExperience, companyType, topic, difficulty } = req.body;
@@ -96,7 +94,7 @@ Only return the list of Q&A without extra comments or intro.
     });
 
     const text = chatResponse.choices[0].message.content;
-    console.log("📝 Groq Response:\n", text);
+    console.log("Groq Response:\n", text);
 
     const qaBlocks = text.split(/\n(?=\d+\.\s)/);
     const qaList = [];
@@ -113,7 +111,7 @@ Only return the list of Q&A without extra comments or intro.
     });
 
     if (qaList.length === 0) {
-      console.error("❌ Failed to parse questions properly.");
+      console.error("Failed to parse questions properly.");
       return res.status(500).json({ error: "Failed to parse Groq response properly." });
     }
 
@@ -126,21 +124,21 @@ Only return the list of Q&A without extra comments or intro.
         questions: qaList,
       });
       await newEntry.save();
-      console.log("✅ Questions saved to MongoDB.");
+      console.log("Questions saved to MongoDB.");
     } catch (err) {
-      console.error("❌ MongoDB Save Error:", err);
+      console.error("MongoDB Save Error:", err);
       return res.status(500).json({ error: "Failed to save interview questions" });
     }
 
     res.json({ questions: qaList });
 
   } catch (error) {
-    console.error("❌ Unexpected Error:", error);
+    console.error("Unexpected Error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on ${process.env.PORT}`);
+  console.log(`Server running on ${process.env.PORT}`);
 }); 
