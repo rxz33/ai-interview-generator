@@ -7,7 +7,7 @@ const OpenAI = require("openai");
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json());  //middleware
 app.use(cors({
   origin: ["https://myinterq.vercel.app", "http://localhost:3000"],
   methods: ["GET", "POST"],
