@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const OpenAI = require("openai");
-console.log("🚀 SERVER VERSION: 17-Dec-FIX-3");
 
 dotenv.config();
 
@@ -84,10 +83,10 @@ Answer: Full answer in 4–6 lines
 Return ONLY the list. No intro. No explanation.
 `;
 
+  const MODEL = "llama-3.1-8b-instant";
 
-
-    const chatResponse = await openai.chat.completions.create({
-  model: "llama-3.1-70b-versatile",
+  const chatResponse = await openai.chat.completions.create({
+  model: MODEL,
   messages: [
     { role: "system", content: "You are an expert interview question generator." },
     { role: "user", content: prompt },
