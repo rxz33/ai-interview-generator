@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const OpenAI = require("openai");
+console.log("🚀 SERVER VERSION: 17-Dec-FIX-3");
 
 dotenv.config();
 
