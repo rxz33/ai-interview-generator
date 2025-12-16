@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express");   //express library is called as function as require() returns function/loads library
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -6,8 +6,8 @@ const OpenAI = require("openai");
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());  //middleware
+const app = express(); //create server/app = entire backend application
+app.use(express.json());  //JSON middleware
 app.use(cors({
   origin: ["https://myinterq.vercel.app", "http://localhost:3000"],
   methods: ["GET", "POST"],
@@ -65,23 +65,24 @@ app.post("/api/interview-questions", async (req, res) => {
 const prompt = `
 You are an expert AI system designed to create high-quality interview questions and answers.
 
-Generate **exactly 10**${difficulty} level interview questions for the role of **${jobType}** with the following background:
+Generate exactly 10 ${difficulty} level interview questions for the role of ${jobType}.
 
-- Candidate's Experience: **${workExperience} years**
-- Focus Topic: **${topic}**
-- Target Company Type: **${companyType}** (e.g., Startup, MNC, Remote-first)
+Candidate Experience: ${workExperience} years  
+Focus Topic: ${topic}  
+Company Type: ${companyType}
 
-Ensure:
-- 4 **Technical** questions (role-specific, challenging, covering the topic if relevant)
-- 3 **Behavioral** questions (based on soft skills, values, team collaboration)
-- 3 **Situational** questions (real-world workplace scenarios and decision-making)
+Rules:
+- 4 Technical questions
+- 3 Behavioral questions
+- 3 Situational questions
 
-Each entry must be formatted exactly like this:
+Format strictly as:
 1. Question
-Answer: <Full answer in 4–6 lines>
+Answer: Full answer in 4–6 lines
 
-Only return the list of Q&A without extra comments or intro.
+Return ONLY the list. No intro. No explanation.
 `;
+
 
 
     const chatResponse = await openai.chat.completions.create({
@@ -121,6 +122,7 @@ Only return the list of Q&A without extra comments or intro.
         workExperience,
         companyType,
         topic,
+        difficulty,
         questions: qaList,
       });
       await newEntry.save();
@@ -142,3 +144,13 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on ${process.env.PORT}`);
 }); 
+
+
+// Node.js = Engine / Runtime
+
+// Node.js is the platform that allows JavaScript to run outside the browser.
+//Express.js = Framework built on Node.js
+
+// Express is a web framework made using Node.js.
+// Express handles “web stuff”
+// Node handles “system stuff”
