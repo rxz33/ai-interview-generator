@@ -86,13 +86,14 @@ Return ONLY the list. No intro. No explanation.
 
 
     const chatResponse = await openai.chat.completions.create({
-      model: "llama3-70b-8192", // Groq’s best model
-      messages: [
-        { role: "system", content: "You are an expert interview question generator." },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.7,
-    });
+  model: "llama-3.1-70b-versatile",
+  messages: [
+    { role: "system", content: "You are an expert interview question generator." },
+    { role: "user", content: prompt },
+  ],
+  temperature: 0.7,
+});
+
 
     const text = chatResponse.choices[0].message.content;
     console.log("Groq Response:\n", text);
