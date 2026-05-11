@@ -1,15 +1,15 @@
-AI Interview Question Generator - InterQ
+# AI Interview Question Generator - InterQ
 
 InterQ is a professional, AI-driven interview preparation engine that generates relevant, role-specific questions and expert-level answers using Groq AI. Designed with a clean and minimal interface, it provides a seamless user experience for serious job seekers.
 
-Tech Stack
+## Tech Stack
 - **Frontend**: React, Clean CSS, Lucide Icons
 - **Backend**: Node.js, Express.js
 - **AI**: Groq (Llama 3.1 8B)
 - **Database**: MongoDB
 - **PDF**: html2canvas & jsPDF
 
-Key Features
+## Key Features
 - **Fast AI**: Role-specific question sets in seconds.
 - **Clean UI**: Modern minimal design with light and dark mode support.
 - **Voice Prep**: Text-to-speech integration for verbal practice.
