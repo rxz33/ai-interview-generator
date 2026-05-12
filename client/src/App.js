@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { RingLoader } from 'react-spinners';
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import { FaSun, FaMoon, FaVolumeUp, FaStop } from 'react-icons/fa';
 import './App.css';
 
@@ -86,59 +85,75 @@ function App() {
     setLoading(false);
   };
 
-  const downloadPDF = async () => {
-    const input = document.getElementById("pdf-content");
-    
-    // Create a style block for the PDF capture to fix spacing and margins
-    const style = document.createElement('style');
-    style.innerHTML = `
-      #pdf-content { 
-        padding: 40px !important; 
-        width: 800px !important;
-        letter-spacing: 0.2px !important;
-        word-spacing: 2px !important;
-      }
-      .speak-btn { display: none !important; }
-      .question-item { margin-bottom: 30px !important; page-break-inside: avoid !important; }
-      .q-text, .a-text { line-height: 1.6 !important; }
-    `;
-    document.head.appendChild(style);
+  const downloadPDF = () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - (margin * 2);
+    let yPos = 25;
 
-    try {
-      const canvas = await html2canvas(input, { 
-        scale: 2, 
-        backgroundColor: theme === 'light' ? "#ffffff" : "#0d1117",
-        useCORS: true,
-        logging: false,
-        onclone: (clonedDoc) => {
-          // This runs on the cloned document used for the canvas
-          const content = clonedDoc.getElementById('pdf-content');
-          content.style.padding = '40px';
+    // Title
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(22);
+    pdf.text("InterQ Interview Preparation Report", margin, yPos);
+    yPos += 10;
+
+    // Meta Info
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(100);
+    pdf.text(`Role: ${formData.jobType} | Difficulty: ${formData.difficulty}`, margin, yPos);
+    yPos += 15;
+
+    const categories = ["TECHNICAL", "BEHAVIORAL", "SITUATIONAL"];
+
+    categories.forEach(cat => {
+      const filtered = questions.filter(q => q.category.toUpperCase() === cat);
+      if (filtered.length === 0) return;
+
+      // Section Header
+      if (yPos > pageHeight - 30) { pdf.addPage(); yPos = 20; }
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(14);
+      pdf.setTextColor(52, 152, 219); // Blue accent
+      pdf.text(cat, margin, yPos);
+      pdf.line(margin, yPos + 2, margin + 40, yPos + 2);
+      yPos += 12;
+
+      filtered.forEach((qa) => {
+        // Prepare Question text
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11);
+        pdf.setTextColor(0);
+        const qLines = pdf.splitTextToSize(`Q: ${qa.question}`, contentWidth);
+        
+        // Prepare Answer text
+        pdf.setFont("helvetica", "normal");
+        const aLines = pdf.splitTextToSize(`A: ${qa.answer}`, contentWidth);
+
+        const totalBlockHeight = (qLines.length * 6) + (aLines.length * 6) + 10;
+
+        // Page break check
+        if (yPos + totalBlockHeight > pageHeight - margin) {
+          pdf.addPage();
+          yPos = 20;
         }
+
+        // Draw Question
+        pdf.setFont("helvetica", "bold");
+        pdf.text(qLines, margin, yPos);
+        yPos += qLines.length * 6;
+
+        // Draw Answer
+        pdf.setFont("helvetica", "normal");
+        pdf.text(aLines, margin, yPos);
+        yPos += (aLines.length * 6) + 8; // Extra spacing after each block
       });
+      yPos += 5; // Extra spacing after each category
+    });
 
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; 
-      const pageHeight = 297; 
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save("InterQ_Interview_Prep.pdf");
-    } finally {
-      document.head.removeChild(style);
-    }
+    pdf.save(`InterQ_${formData.jobType.replace(/\s+/g, '_')}_Prep.pdf`);
   };
 
   const categories = ["TECHNICAL", "BEHAVIORAL", "SITUATIONAL"];
