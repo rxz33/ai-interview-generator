@@ -5,7 +5,35 @@ import jsPDF from "jspdf";
 import { FaSun, FaMoon, FaVolumeUp, FaStop } from 'react-icons/fa';
 import './App.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const getApiBaseUrl = () => {
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  if (typeof window !== "undefined") {
+    const { hostname } = window.location;
+    
+    // If running locally
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      // If we are on React dev server port (usually 3000), point to backend port 5000
+      if (window.location.port === "3000") {
+        return "http://localhost:5000";
+      }
+      // If served directly by local backend
+      return "";
+    }
+    
+    // If served directly by deployed backend on Render
+    if (hostname.includes("onrender.com")) {
+      return "";
+    }
+  }
+
+  // Fallback to the production backend on Render
+  return "https://ai-interview-backend.onrender.com";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 function App() {
   const [formData, setFormData] = useState({
