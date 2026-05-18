@@ -30,7 +30,7 @@ const getApiBaseUrl = () => {
   }
 
   // Fallback to the production backend on Render
-  return "https://ai-interview-backend.onrender.com";
+  return "https://ai-interview-backend-5es5.onrender.com";
 };
 
 const API_BASE_URL = getApiBaseUrl();
